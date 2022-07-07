@@ -1,6 +1,6 @@
 {
   "name": "react-native-event",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "React context for subscribing to all react native or DOM user interaction events in react universal (react-dom, react-native, react-native-web) applications",
   "keywords": [
     "react-dom",
