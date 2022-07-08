@@ -2,7 +2,8 @@ import React from 'react';
 import ReactNative from 'react-native';
 export const EventContext = /*#__PURE__*/ React.createContext(undefined);
 export function EventProvider({ children  }) {
-    const [handlers] = React.useState([]);
+    const state = React.useState([]);
+    const handlers = state[0];
     function onEvent(event) {
         handlers.forEach((subscriber)=>subscriber(event));
     }
@@ -25,7 +26,9 @@ export function EventProvider({ children  }) {
 }
 export function useEvent(handler, dependencies) {
     const context = React.useContext(EventContext);
-    if (!context.subscribe) throw new Error('react-native-event: subscribe not found on context. You might be missing the EventProvider or have multiple instances of react-native-event');
+    if (!context) {
+        throw new Error('react-native-event: subscribe not found on context. You might be missing the EventProvider or have multiple instances of react-native-event');
+    }
     React.useEffect(()=>context.subscribe(handler), [
         context.subscribe,
         handler

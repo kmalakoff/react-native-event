@@ -64,4 +64,34 @@ describe('react-native', function () {
     assert.equal(pressValue.target, getByTestId('outside'));
     assert.ok(!!eventValue);
   });
+
+  it('press missing provider', async function () {
+    function UseEventComponent({ onEvent }) {
+      useEvent(onEvent, [onEvent]);
+      return <React.Fragment />;
+    }
+
+    function Component({ onPress, onEvent }) {
+      return (
+        <View>
+          <TouchableOpacity testID="inside" onPress={onPress} />
+          <UseEventComponent onEvent={onEvent} />
+          <TouchableOpacity testID="outside" onPress={onPress} />
+        </View>
+      );
+    }
+
+    try {
+      const onPress = () => {
+        /* emptty */
+      };
+      const onEvent = () => {
+        /* emptty */
+      };
+      await render(<Component onPress={onPress} onEvent={onEvent} />);
+    } catch (err) {
+      console.log(err);
+      assert.ok(err.message.indexOf('subscribe not found on context') >= 0);
+    }
+  });
 });
