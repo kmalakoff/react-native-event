@@ -1,8 +1,8 @@
 ## react-native-event
 
-React context for subscribing to all react native or DOM user interaction events in react universal (react-dom, react-native, react-native-web) applications.
+React context for subscribing to all react native interaction events.
 
-### Example 1 - Native
+### Example 1
 
 ```jsx
 import React from 'react';
@@ -32,39 +32,6 @@ const App = () => {
 export default App;
 
 // any press will call the global event handler
-```
-
-### Example 2 - DOM
-
-```jsx
-import React from 'react';
-import { createRoot } from 'react-dom/client';
-import { useEvent, EventProvider } from 'react-native-event';
-
-function UseEventComponent() {
-  const handler = React.useCallback((event) => {
-    /* do something with any event */
-  });
-
-  useEvent(handler, [handler]);
-  return <React.Fragment />;
-}
-
-const container = document.getElementById('app');
-const root = createRoot(container);
-root.render(
-  <React.Fragment>
-    <EventProvider events={['click'] /* default */}>
-      <UseEventComponent />
-      <button id="demo-1" onClick={() => {}} />
-    </EventProvider>
-    <button id="demo-2" onClick={() => {}} />
-  </React.Fragment>,
-);
-
-// any click will call the global event handler
-document.getElementById('demo-1').click();
-document.getElementById('demo-2').click();
 ```
 
 ### Documentation
