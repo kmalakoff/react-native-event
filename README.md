@@ -2,6 +2,8 @@
 
 React context for subscribing to all react native interaction events.
 
+For a react-dom version, check out [react-dom-event](https://www.npmjs.com/package/react-dom-event)
+
 ### Example 1
 
 ```jsx
