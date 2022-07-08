@@ -1,15 +1,20 @@
-declare global {
-    interface Document {
-    }
-    interface Window {
-        document: Document;
-    }
-}
-import type { EventTypes as EventTypesNative, HandlerType as HandlerTypeNative, EventContextType as EventContextTypeNative } from './native';
-import type { EventTypes as EventTypesDOM, HandlerType as HandlerTypeDOM, EventContextType as EventContextTypeDOM } from 'react-dom-event';
-export declare type EventTypes = EventTypesNative | EventTypesDOM;
-export declare type HandlerType = HandlerTypeNative | HandlerTypeDOM;
-export declare type EventContextType = EventContextTypeNative | EventContextTypeDOM;
-export declare const EventContext: any;
-export declare const EventProvider: any;
-export declare const useEvent: any;
+import React from 'react';
+import ReactNative from 'react-native';
+export declare type EventTypes = ReactNative.GestureResponderEvent;
+export declare type HandlerType = (event: EventTypes) => void;
+export declare type EventContextType = {
+    subscribe: (handler: HandlerType) => void;
+};
+export declare const EventContext: React.Context<EventContextType>;
+export declare type EventProviderProps = {
+    events?: string[];
+    children?: React.ReactNode;
+};
+export declare function EventProvider({ children }: EventProviderProps): JSX.Element;
+export declare function useEvent(handler: any, dependencies: any): void;
+declare const _default: {
+    EventContext: React.Context<EventContextType>;
+    EventProvider: typeof EventProvider;
+    useEvent: typeof useEvent;
+};
+export default _default;

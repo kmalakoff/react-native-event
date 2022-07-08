@@ -1,49 +1,61 @@
-// define window to avoid conflicts with dom and react-native types
-declare global {
-  interface Document {}
-  interface Window {
-    document: Document;
+import React from 'react';
+import ReactNative from 'react-native';
+
+export type EventTypes = ReactNative.GestureResponderEvent;
+export type HandlerType = (event: EventTypes) => void;
+
+export type EventContextType = {
+  subscribe: (handler: HandlerType) => void;
+};
+
+export const EventContext = React.createContext<EventContextType | undefined>(
+  undefined,
+);
+
+export type EventProviderProps = {
+  events?: string[];
+  children?: React.ReactNode;
+};
+export function EventProvider({ children }: EventProviderProps) {
+  const [handlers] = React.useState<HandlerType[]>([]);
+  function onEvent(event: EventTypes) {
+    handlers.forEach((subscriber) => subscriber(event));
   }
+  function subscribe(handler: HandlerType) {
+    handlers.push(handler);
+    return () => handlers.splice(handlers.indexOf(handler), 1);
+  }
+
+  return (
+    <EventContext.Provider value={{ subscribe }}>
+      <ReactNative.View
+        style={ReactNative.StyleSheet.absoluteFill}
+        onStartShouldSetResponderCapture={(
+          event: ReactNative.GestureResponderEvent,
+        ) => {
+          event.persist();
+          onEvent(event);
+          return false;
+        }}
+      >
+        {children}
+      </ReactNative.View>
+    </EventContext.Provider>
+  );
 }
-declare const window: Window & typeof globalThis;
 
-// @ts-ignore
-import native from './native.tsx';
-import type {
-  EventTypes as EventTypesNative,
-  HandlerType as HandlerTypeNative,
-  EventContextType as EventContextTypeNative,
-} from './native';
-import dom from 'react-dom-event';
-import type {
-  EventTypes as EventTypesDOM,
-  HandlerType as HandlerTypeDOM,
-  EventContextType as EventContextTypeDOM,
-} from 'react-dom-event';
+export function useEvent(handler, dependencies) {
+  const context = React.useContext(EventContext);
+  if (!context.subscribe) throw new Error('react-native-event: subscribe not found on context. You might be missing the EventProvider or have multiple instances of react-native-event')
 
-export type EventTypes = EventTypesNative | EventTypesDOM;
-export type HandlerType = HandlerTypeNative | HandlerTypeDOM;
-export type EventContextType = EventContextTypeNative | EventContextTypeDOM;
-
-let EventContextUniversal:
-  | typeof native.EventContext
-  | typeof dom.EventContext
-  | null = null;
-let EventProviderUniversal:
-  | typeof native.EventProvider
-  | typeof dom.EventProvider
-  | null = null;
-let useEventUniversal: typeof native.useEvent | typeof dom.useEvent | null =
-  null;
-if (window?.document) {
-  EventContextUniversal = dom.EventContext;
-  EventProviderUniversal = dom.EventProvider;
-  useEventUniversal = dom.useEvent;
-} else {
-  EventContextUniversal = native.EventContext;
-  EventProviderUniversal = native.EventProvider;
-  useEventUniversal = native.useEvent;
+  React.useEffect(
+    () => context.subscribe(handler),
+    [context.subscribe, handler].concat(dependencies),
+  );
 }
-export const EventContext = EventContextUniversal;
-export const EventProvider = EventProviderUniversal;
-export const useEvent = useEventUniversal;
+
+export default {
+  EventContext,
+  EventProvider,
+  useEvent,
+};

@@ -1,14 +1,13 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('react'), require('react-native'), require('react-dom-event')) :
-  typeof define === 'function' && define.amd ? define(['exports', 'react', 'react-native', 'react-dom-event'], factory) :
-  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.reactNativeEvent = {}, global.React, global.ReactNative, global.reactDomEvent));
-})(this, (function (exports, React, ReactNative, dom) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('react'), require('react-native')) :
+  typeof define === 'function' && define.amd ? define(['exports', 'react', 'react-native'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.reactNativeEvent = {}, global.React, global.ReactNative));
+})(this, (function (exports, React, ReactNative) { 'use strict';
 
   function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
   var React__default = /*#__PURE__*/_interopDefaultLegacy(React);
   var ReactNative__default = /*#__PURE__*/_interopDefaultLegacy(ReactNative);
-  var dom__default = /*#__PURE__*/_interopDefaultLegacy(dom);
 
   function _arrayLikeToArray(arr, len) {
       if (len == null || len > arr.length) len = arr.length;
@@ -56,8 +55,8 @@
       if (n === "Map" || n === "Set") return Array.from(n);
       if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
   }
-  var EventContext$1 = /*#__PURE__*/ React__default["default"].createContext(undefined);
-  function EventProvider$1(param) {
+  var EventContext = /*#__PURE__*/ React__default["default"].createContext(undefined);
+  function EventProvider(param) {
       var children = param.children;
       var onEvent = function onEvent(event) {
           handlers.forEach(function(subscriber) {
@@ -71,7 +70,7 @@
           };
       };
       var ref = _slicedToArray(React__default["default"].useState([]), 1), handlers = ref[0];
-      return /*#__PURE__*/ React__default["default"].createElement(EventContext$1.Provider, {
+      return /*#__PURE__*/ React__default["default"].createElement(EventContext.Provider, {
           value: {
               subscribe: subscribe
           }
@@ -84,40 +83,25 @@
           }
       }, children));
   }
-  function useEvent$1(handler, dependencies) {
-      var subscribe = React__default["default"].useContext(EventContext$1).subscribe;
+  function useEvent(handler, dependencies) {
+      var context = React__default["default"].useContext(EventContext);
+      if (!context.subscribe) throw new Error("react-native-event: subscribe not found on context. You might be missing the EventProvider or have multiple instances of react-native-event");
       React__default["default"].useEffect(function() {
-          return subscribe(handler);
+          return context.subscribe(handler);
       }, [
-          subscribe,
+          context.subscribe,
           handler
       ].concat(dependencies));
   }
-  var native = {
-      EventContext: EventContext$1,
-      EventProvider: EventProvider$1,
-      useEvent: useEvent$1
+  var index = {
+      EventContext: EventContext,
+      EventProvider: EventProvider,
+      useEvent: useEvent
   };
-
-  // @ts-ignore
-  var EventContextUniversal = null;
-  var EventProviderUniversal = null;
-  var useEventUniversal = null;
-  if (window === null || window === void 0 ? void 0 : window.document) {
-      EventContextUniversal = dom__default["default"].EventContext;
-      EventProviderUniversal = dom__default["default"].EventProvider;
-      useEventUniversal = dom__default["default"].useEvent;
-  } else {
-      EventContextUniversal = native.EventContext;
-      EventProviderUniversal = native.EventProvider;
-      useEventUniversal = native.useEvent;
-  }
-  var EventContext = EventContextUniversal;
-  var EventProvider = EventProviderUniversal;
-  var useEvent = useEventUniversal;
 
   exports.EventContext = EventContext;
   exports.EventProvider = EventProvider;
+  exports["default"] = index;
   exports.useEvent = useEvent;
 
   Object.defineProperty(exports, '__esModule', { value: true });
