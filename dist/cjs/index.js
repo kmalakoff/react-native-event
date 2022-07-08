@@ -4,7 +4,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.EventProvider = EventProvider;
 exports.useEvent = useEvent;
-module.exports = exports.EventContext = void 0;
+exports.EventContext = void 0;
 var _react = _interopRequireDefault(require("react"));
 var _reactNative = _interopRequireDefault(require("react-native"));
 function _arrayLikeToArray(arr, len) {
@@ -97,9 +97,3 @@ function useEvent(handler, dependencies) {
         handler
     ].concat(dependencies));
 }
-var _default = {
-    EventContext: EventContext,
-    EventProvider: EventProvider,
-    useEvent: useEvent
-};
-module.exports = _default;

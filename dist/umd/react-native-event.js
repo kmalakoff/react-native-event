@@ -93,15 +93,9 @@
           handler
       ].concat(dependencies));
   }
-  var index = {
-      EventContext: EventContext,
-      EventProvider: EventProvider,
-      useEvent: useEvent
-  };
 
   exports.EventContext = EventContext;
   exports.EventProvider = EventProvider;
-  exports["default"] = index;
   exports.useEvent = useEvent;
 
   Object.defineProperty(exports, '__esModule', { value: true });

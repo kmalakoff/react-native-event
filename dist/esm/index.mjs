@@ -31,8 +31,3 @@ export function useEvent(handler, dependencies) {
         handler
     ].concat(dependencies));
 }
-export default {
-    EventContext,
-    EventProvider,
-    useEvent
-};
