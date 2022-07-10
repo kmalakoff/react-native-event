@@ -47,16 +47,15 @@
     "version": "tsds version"
   },
   "devDependencies": {
-    "@testing-library/react-native": "^10.1.1",
     "@types/jest": "^28.1.4",
     "@types/react": "18.0.0",
-    "@types/react-native": "0.69.0",
+    "@types/react-native": "0.69.1",
     "cross-env": "^7.0.3",
     "jest": "^28.1.2",
     "jest-environment-jsdom": "^28.1.2",
     "metro-react-native-babel-preset": "^0.71.3",
     "react": "18.0.0",
-    "react-native": "0.69.0",
+    "react-native": "0.69.1",
     "react-test-renderer": "18.0.0",
     "ts-dev-stack": "^0.6.6"
   },

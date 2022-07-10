@@ -1,10 +1,9 @@
 import assert from 'assert';
 import React from 'react';
-import { fireEvent, render } from '@testing-library/react-native';
+import { create, act } from 'react-test-renderer';
 
 import { View, TouchableOpacity } from 'react-native';
 import { useEvent, EventProvider } from 'react-native-event';
-import visit from '../lib/visit';
 
 describe('react-native', function () {
   it('click', async function () {
@@ -26,26 +25,12 @@ describe('react-native', function () {
     }
 
     let pressValue;
-    const onPress = (x) => {
-      pressValue = x;
-
-      // emulate onStartShouldSetResponderCapture
-      visit(toJSON(), (element) => {
-        if (element.props.onStartShouldSetResponderCapture)
-          element.props.onStartShouldSetResponderCapture(
-            Object.assign({
-              persist: function () {
-                /* empty */
-              },
-              x,
-            }),
-          );
-      });
-    };
+    const onPress = (event) => (pressValue = event);
     let eventValue;
     const onEvent = (x) => (eventValue = x);
-    const { getByTestId, toJSON } = await render(
-      <Component onPress={onPress} onEvent={onEvent} />,
+
+    const { root } = await act(() =>
+      create(<Component onPress={onPress} onEvent={onEvent} />),
     );
     assert.equal(pressValue, undefined);
     assert.equal(eventValue, undefined);
@@ -53,15 +38,41 @@ describe('react-native', function () {
     // inside
     pressValue = undefined;
     eventValue = undefined;
-    fireEvent.press(getByTestId('inside'), { target: getByTestId('inside') });
-    assert.equal(pressValue.target, getByTestId('inside'));
+    act(() => {
+      const event = {
+        target: root.findByProps({ testID: 'inside' }),
+        persist() {
+          /* empty */
+        },
+      };
+      root.findByProps({ testID: 'inside' }).props.onPress(event);
+      // emulate onStartShouldSetResponderCapture
+      root.findAll((node) => {
+        if (node.props && node.props.onStartShouldSetResponderCapture)
+          node.props.onStartShouldSetResponderCapture(event);
+      });
+    });
+    assert.equal(pressValue.target, root.findByProps({ testID: 'inside' }));
     assert.ok(!!eventValue);
 
     // outside
     pressValue = undefined;
     eventValue = undefined;
-    fireEvent.press(getByTestId('outside'), { target: getByTestId('outside') });
-    assert.equal(pressValue.target, getByTestId('outside'));
+    act(() => {
+      const event = {
+        target: root.findByProps({ testID: 'outside' }),
+        persist() {
+          /* empty */
+        },
+      };
+      root.findByProps({ testID: 'outside' }).props.onPress(event);
+      // emulate onStartShouldSetResponderCapture
+      root.findAll((node) => {
+        if (node.props && node.props.onStartShouldSetResponderCapture)
+          node.props.onStartShouldSetResponderCapture(event);
+      });
+    });
+    assert.equal(pressValue.target, root.findByProps({ testID: 'outside' }));
     assert.ok(!!eventValue);
   });
 
@@ -88,7 +99,9 @@ describe('react-native', function () {
       const onEvent = () => {
         /* emptty */
       };
-      await render(<Component onPress={onPress} onEvent={onEvent} />);
+      await act(() =>
+        create(<Component onPress={onPress} onEvent={onEvent} />),
+      );
     } catch (err) {
       console.log(err);
       assert.ok(err.message.indexOf('subscribe not found on context') >= 0);
