@@ -2,18 +2,31 @@
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.EventProvider = EventProvider;
-exports.useEvent = useEvent;
-exports.EventContext = void 0;
-var _react = _interopRequireDefault(require("react"));
-var _reactNative = _interopRequireDefault(require("react-native"));
+function _export(target, all) {
+    for(var name in all)Object.defineProperty(target, name, {
+        enumerable: true,
+        get: all[name]
+    });
+}
+_export(exports, {
+    EventContext: function() {
+        return EventContext;
+    },
+    EventProvider: function() {
+        return EventProvider;
+    },
+    useEvent: function() {
+        return useEvent;
+    }
+});
+var _react = /*#__PURE__*/ _interopRequireDefault(require("react"));
+var _reactNative = /*#__PURE__*/ _interopRequireDefault(require("react-native"));
 function _interopRequireDefault(obj) {
     return obj && obj.__esModule ? obj : {
         default: obj
     };
 }
 var EventContext = /*#__PURE__*/ _react.default.createContext(undefined);
-exports.EventContext = EventContext;
 function EventProvider(param) {
     var children = param.children;
     var onEvent = function onEvent(event) {
@@ -53,4 +66,10 @@ function useEvent(handler, dependencies) {
         context.subscribe,
         handler
     ].concat(dependencies));
+}
+
+if ((typeof exports.default === 'function' || (typeof exports.default === 'object' && exports.default !== null)) && typeof exports.default.__esModule === 'undefined') {
+  Object.defineProperty(exports.default, '__esModule', { value: true });
+  for (var key in exports) exports.default[key] = exports[key];
+  module.exports = exports.default;
 }
