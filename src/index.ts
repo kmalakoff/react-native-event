@@ -28,21 +28,6 @@ export function EventProvider({ children }: EventProviderProps) {
     return () => handlers.splice(handlers.indexOf(handler), 1);
   }
 
-  //   <EventContext.Provider value={{ subscribe }}>
-  //   <View
-  //     style={StyleSheet.absoluteFill}
-  //     onStartShouldSetResponderCapture={(
-  //       event: GestureResponderEvent,
-  //     ) => {
-  //       event.persist();
-  //       onEvent(event);
-  //       return false;
-  //     }}
-  //   >
-  //     {children}
-  //   </View>
-  // </EventContext.Provider>
-
   return createElement(
     EventContext.Provider,
     { value: { subscribe } },

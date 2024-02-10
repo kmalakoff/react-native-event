@@ -1,6 +1,6 @@
 {
   "name": "react-native-event",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "React context for subscribing to all react native interaction events",
   "keywords": [
     "react-native",
@@ -61,7 +61,7 @@
     "node": ">=12"
   },
   "tsds": {
-    "source": "src/index.tsx",
+    "source": "src/index.ts",
     "globals": {
       "react": "React",
       "react-native": "ReactNative"
