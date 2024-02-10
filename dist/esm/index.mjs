@@ -1,8 +1,8 @@
-import React from 'react';
-import ReactNative from 'react-native';
-export const EventContext = /*#__PURE__*/ React.createContext(undefined);
+import { useState, useEffect, useContext, createContext, createElement } from 'react';
+import { View, StyleSheet } from 'react-native';
+export const EventContext = /*#__PURE__*/ createContext(undefined);
 export function EventProvider({ children  }) {
-    const state = React.useState([]);
+    const state = useState([]);
     const handlers = state[0];
     function onEvent(event) {
         handlers.forEach((subscriber)=>subscriber(event));
@@ -11,12 +11,26 @@ export function EventProvider({ children  }) {
         handlers.push(handler);
         return ()=>handlers.splice(handlers.indexOf(handler), 1);
     }
-    return /*#__PURE__*/ React.createElement(EventContext.Provider, {
+    //   <EventContext.Provider value={{ subscribe }}>
+    //   <View
+    //     style={StyleSheet.absoluteFill}
+    //     onStartShouldSetResponderCapture={(
+    //       event: GestureResponderEvent,
+    //     ) => {
+    //       event.persist();
+    //       onEvent(event);
+    //       return false;
+    //     }}
+    //   >
+    //     {children}
+    //   </View>
+    // </EventContext.Provider>
+    return /*#__PURE__*/ createElement(EventContext.Provider, {
         value: {
             subscribe
         }
-    }, /*#__PURE__*/ React.createElement(ReactNative.View, {
-        style: ReactNative.StyleSheet.absoluteFill,
+    }, /*#__PURE__*/ createElement(View, {
+        style: StyleSheet.absoluteFill,
         onStartShouldSetResponderCapture: (event)=>{
             event.persist();
             onEvent(event);
@@ -25,11 +39,11 @@ export function EventProvider({ children  }) {
     }, children));
 }
 export function useEvent(handler, dependencies) {
-    const context = React.useContext(EventContext);
+    const context = useContext(EventContext);
     if (!context) {
         throw new Error('react-native-event: subscribe not found on context. You might be missing the EventProvider or have multiple instances of react-native-event');
     }
-    React.useEffect(()=>context.subscribe(handler), [
+    useEffect(()=>context.subscribe(handler), [
         context.subscribe,
         handler
     ].concat(dependencies));
