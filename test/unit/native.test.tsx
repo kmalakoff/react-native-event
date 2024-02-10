@@ -29,9 +29,7 @@ describe('react-native', function () {
     let eventValue;
     const onEvent = (x) => (eventValue = x);
 
-    const { root } = await act(() =>
-      create(<Component onPress={onPress} onEvent={onEvent} />),
-    );
+    const { root } = await act(() => create(<Component onPress={onPress} onEvent={onEvent} />));
     assert.equal(pressValue, undefined);
     assert.equal(eventValue, undefined);
 
@@ -48,8 +46,7 @@ describe('react-native', function () {
       root.findByProps({ testID: 'inside' }).props.onPress(event);
       // emulate onStartShouldSetResponderCapture
       root.findAll((node) => {
-        if (node.props && node.props.onStartShouldSetResponderCapture)
-          node.props.onStartShouldSetResponderCapture(event);
+        if (node.props && node.props.onStartShouldSetResponderCapture) node.props.onStartShouldSetResponderCapture(event);
       });
     });
     assert.equal(pressValue.target, root.findByProps({ testID: 'inside' }));
@@ -68,8 +65,7 @@ describe('react-native', function () {
       root.findByProps({ testID: 'outside' }).props.onPress(event);
       // emulate onStartShouldSetResponderCapture
       root.findAll((node) => {
-        if (node.props && node.props.onStartShouldSetResponderCapture)
-          node.props.onStartShouldSetResponderCapture(event);
+        if (node.props && node.props.onStartShouldSetResponderCapture) node.props.onStartShouldSetResponderCapture(event);
       });
     });
     assert.equal(pressValue.target, root.findByProps({ testID: 'outside' }));
@@ -99,9 +95,7 @@ describe('react-native', function () {
       const onEvent = () => {
         /* emptty */
       };
-      await act(() =>
-        create(<Component onPress={onPress} onEvent={onEvent} />),
-      );
+      await act(() => create(<Component onPress={onPress} onEvent={onEvent} />));
     } catch (err) {
       console.log(err);
       assert.ok(err.message.indexOf('subscribe not found on context') >= 0);
