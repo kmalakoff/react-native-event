@@ -4,7 +4,7 @@
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.reactNativeEvent = {}, global.React, global.ReactNative));
 })(this, (function (exports, react, reactNative) { 'use strict';
 
-  var EventContext = /*#__PURE__*/ react.createContext(undefined);
+  var EventContext = react.createContext(undefined);
   function EventProvider(param) {
       var children = param.children;
       var onEvent = function onEvent(event) {
@@ -20,25 +20,11 @@
       };
       var state = react.useState([]);
       var handlers = state[0];
-      //   <EventContext.Provider value={{ subscribe }}>
-      //   <View
-      //     style={StyleSheet.absoluteFill}
-      //     onStartShouldSetResponderCapture={(
-      //       event: GestureResponderEvent,
-      //     ) => {
-      //       event.persist();
-      //       onEvent(event);
-      //       return false;
-      //     }}
-      //   >
-      //     {children}
-      //   </View>
-      // </EventContext.Provider>
-      return /*#__PURE__*/ react.createElement(EventContext.Provider, {
+      return react.createElement(EventContext.Provider, {
           value: {
               subscribe: subscribe
           }
-      }, /*#__PURE__*/ react.createElement(reactNative.View, {
+      }, react.createElement(reactNative.View, {
           style: reactNative.StyleSheet.absoluteFill,
           onStartShouldSetResponderCapture: function(event) {
               event.persist();

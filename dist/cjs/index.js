@@ -21,7 +21,7 @@ _export(exports, {
 });
 var _react = require("react");
 var _reactNative = require("react-native");
-var EventContext = /*#__PURE__*/ (0, _react.createContext)(undefined);
+var EventContext = (0, _react.createContext)(undefined);
 function EventProvider(param) {
     var children = param.children;
     var onEvent = function onEvent(event) {
@@ -37,25 +37,11 @@ function EventProvider(param) {
     };
     var state = (0, _react.useState)([]);
     var handlers = state[0];
-    //   <EventContext.Provider value={{ subscribe }}>
-    //   <View
-    //     style={StyleSheet.absoluteFill}
-    //     onStartShouldSetResponderCapture={(
-    //       event: GestureResponderEvent,
-    //     ) => {
-    //       event.persist();
-    //       onEvent(event);
-    //       return false;
-    //     }}
-    //   >
-    //     {children}
-    //   </View>
-    // </EventContext.Provider>
-    return /*#__PURE__*/ (0, _react.createElement)(EventContext.Provider, {
+    return (0, _react.createElement)(EventContext.Provider, {
         value: {
             subscribe: subscribe
         }
-    }, /*#__PURE__*/ (0, _react.createElement)(_reactNative.View, {
+    }, (0, _react.createElement)(_reactNative.View, {
         style: _reactNative.StyleSheet.absoluteFill,
         onStartShouldSetResponderCapture: function(event) {
             event.persist();
