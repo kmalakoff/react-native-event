@@ -7,28 +7,28 @@ For a react-dom version, check out [react-dom-event](https://www.npmjs.com/packa
 ### Example 1
 
 ```jsx
-import React from 'react';
+import { useCallback, Fragment } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { useEvent, EventProvider } from 'react-native-event';
 
 function UseEventComponent() {
-  const handler = React.useCallback((event) => {
+  const handler = useCallback((event) => {
     /* do something with any event */
   });
 
   useEvent(handler, [handler]);
-  return <React.Fragment />;
+  return <Fragment />;
 }
 
 const App = () => {
   return (
-    <React.Fragment>
+    <Fragment>
       <EventProvider>
         <UseEventComponent />
         <TouchableOpacity onPress={() => {}} />
       </EventProvider>
       <TouchableOpacity onPress={() => {}} />
-    </React.Fragment>
+    </Fragment>
   );
 };
 export default App;
