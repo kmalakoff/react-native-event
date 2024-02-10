@@ -41,8 +41,8 @@ export function EventProvider({ children }: EventProviderProps) {
           return false;
         },
       },
-      children,
-    ),
+      children
+    )
   );
 }
 
