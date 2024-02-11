@@ -2,15 +2,7 @@
   "name": "react-native-event",
   "version": "0.2.4",
   "description": "React context for subscribing to all react native interaction events",
-  "keywords": [
-    "react-native",
-    "react",
-    "native",
-    "outside",
-    "press",
-    "touch",
-    "typescript"
-  ],
+  "keywords": ["react-native", "react", "native", "outside", "press", "touch", "typescript"],
   "repository": "kmalakoff/react-native-event",
   "license": "MIT",
   "author": "Kevin Malakoff <kmalakoff@gmail.com> (https://github.com/kmalakoff)",
@@ -27,20 +19,18 @@
   "unpkg": "dist/umd/react-native-event.js",
   "module": "dist/esm/index.mjs",
   "types": "dist/types/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "files": ["dist"],
   "scripts": {
     "build": "tsds build",
     "coverage": "tsds link && cross-env NODE_OPTIONS=--experimental-vm-modules jest test/**/*.test.* --collect-coverage",
     "deploy": "tsds deploy",
-    "format": "tsds format",
-    "lint": "tsds lint",
+    "format": "biome check --apply-unsafe src/ test/",
     "test": "tsds link && cross-env NODE_OPTIONS=--experimental-vm-modules jest jest test/**/*.test.*",
     "test:engines": "nvu engines npm test",
     "version": "tsds version"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.5.3",
     "@types/jest": "^29.5.12",
     "@types/react": "18.0.15",
     "@types/react-native": "^0.69.1",
@@ -51,14 +41,14 @@
     "react": "18.0.0",
     "react-native": "0.69.3",
     "react-test-renderer": "18.0.0",
-    "ts-dev-stack": "^0.8.12"
+    "ts-dev-stack": "^0.9.0"
   },
   "peerDependencies": {
     "react": "*",
     "react-native": "*"
   },
   "engines": {
-    "node": ">=12"
+    "node": ">=14"
   },
   "tsds": {
     "source": "src/index.ts",

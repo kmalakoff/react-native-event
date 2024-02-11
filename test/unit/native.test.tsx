@@ -1,12 +1,14 @@
 import assert from 'assert';
 import { Fragment } from 'react';
-import { create, act } from 'react-test-renderer';
+import { act, create } from 'react-test-renderer';
 
-import { View, TouchableOpacity } from 'react-native';
-import { useEvent, EventProvider } from 'react-native-event';
+import { TouchableOpacity, View } from 'react-native';
+import { EventProvider, useEvent } from 'react-native-event';
 
-describe('react-native', function () {
-  it('click', async function () {
+type EventTypes = MouseEvent | TouchEvent | KeyboardEvent;
+
+describe('react-native', () => {
+  it('click', async () => {
     function UseEventComponent({ onEvent }) {
       useEvent(onEvent, [onEvent]);
       return <Fragment />;
@@ -24,11 +26,12 @@ describe('react-native', function () {
       );
     }
 
-    let pressValue;
-    const onPress = (event) => (pressValue = event);
-    let eventValue;
+    let pressValue: React.MouseEvent<HTMLButtonElement>;
+    let eventValue: EventTypes;
+    // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
+    const onPress = (x) => (pressValue = x);
+    // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
     const onEvent = (x) => (eventValue = x);
-
     const { root } = await act(() => create(<Component onPress={onPress} onEvent={onEvent} />));
     assert.equal(pressValue, undefined);
     assert.equal(eventValue, undefined);
@@ -46,7 +49,7 @@ describe('react-native', function () {
       root.findByProps({ testID: 'inside' }).props.onPress(event);
       // emulate onStartShouldSetResponderCapture
       root.findAll((node) => {
-        if (node.props && node.props.onStartShouldSetResponderCapture) node.props.onStartShouldSetResponderCapture(event);
+        if (node.props?.onStartShouldSetResponderCapture) node.props.onStartShouldSetResponderCapture(event);
       });
     });
     assert.equal(pressValue.target, root.findByProps({ testID: 'inside' }));
@@ -65,14 +68,14 @@ describe('react-native', function () {
       root.findByProps({ testID: 'outside' }).props.onPress(event);
       // emulate onStartShouldSetResponderCapture
       root.findAll((node) => {
-        if (node.props && node.props.onStartShouldSetResponderCapture) node.props.onStartShouldSetResponderCapture(event);
+        if (node.props?.onStartShouldSetResponderCapture) node.props.onStartShouldSetResponderCapture(event);
       });
     });
     assert.equal(pressValue.target, root.findByProps({ testID: 'outside' }));
     assert.ok(!!eventValue);
   });
 
-  it('press missing provider', async function () {
+  it('press missing provider', async () => {
     function UseEventComponent({ onEvent }) {
       useEvent(onEvent, [onEvent]);
       return <Fragment />;
