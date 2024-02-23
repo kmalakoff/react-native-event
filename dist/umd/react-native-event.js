@@ -7,19 +7,19 @@
   var EventContext = react.createContext(undefined);
   function EventProvider(param) {
       var children = param.children;
-      var onEvent = function onEvent(event) {
+      var state = react.useState([]);
+      var handlers = state[0];
+      function onEvent(event) {
           handlers.forEach(function(subscriber) {
               return subscriber(event);
           });
-      };
-      var subscribe = function subscribe(handler) {
+      }
+      function subscribe(handler) {
           handlers.push(handler);
           return function() {
               return handlers.splice(handlers.indexOf(handler), 1);
           };
-      };
-      var state = react.useState([]);
-      var handlers = state[0];
+      }
       return react.createElement(EventContext.Provider, {
           value: {
               subscribe: subscribe
@@ -38,6 +38,7 @@
       if (!context) {
           throw new Error("react-native-event: subscribe not found on context. You might be missing the EventProvider or have multiple instances of react-native-event");
       }
+      // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
       react.useEffect(function() {
           return context.subscribe(handler);
       }, [
@@ -49,8 +50,6 @@
   exports.EventContext = EventContext;
   exports.EventProvider = EventProvider;
   exports.useEvent = useEvent;
-
-  Object.defineProperty(exports, '__esModule', { value: true });
 
 }));
 //# sourceMappingURL=react-native-event.js.map
