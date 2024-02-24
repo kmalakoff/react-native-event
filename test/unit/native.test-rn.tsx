@@ -1,12 +1,18 @@
+// @ts-ignore
+global.IS_REACT_ACT_ENVIRONMENT = true;
+
 import assert from 'assert';
-import { Fragment } from 'react';
-import { create, act } from 'react-test-renderer';
+import React, { Fragment } from 'react';
+import { act, create } from 'react-test-renderer';
 
-import { View, TouchableOpacity } from 'react-native';
-import { useEvent, EventProvider } from 'react-native-event';
+import { TouchableOpacity, View } from 'react-native';
+// @ts-ignore
+import { EventProvider, useEvent } from 'react-native-event';
 
-describe('react-native', function () {
-  it('click', async function () {
+type EventTypes = MouseEvent | TouchEvent | KeyboardEvent;
+
+describe('react-native', () => {
+  it('click', async () => {
     function UseEventComponent({ onEvent }) {
       useEvent(onEvent, [onEvent]);
       return <Fragment />;
@@ -24,11 +30,12 @@ describe('react-native', function () {
       );
     }
 
-    let pressValue;
-    const onPress = (event) => (pressValue = event);
-    let eventValue;
+    let pressValue: React.MouseEvent<HTMLButtonElement>;
+    let eventValue: EventTypes;
+    // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
+    const onPress = (x) => (pressValue = x);
+    // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
     const onEvent = (x) => (eventValue = x);
-
     const { root } = await act(() => create(<Component onPress={onPress} onEvent={onEvent} />));
     assert.equal(pressValue, undefined);
     assert.equal(eventValue, undefined);
@@ -72,7 +79,7 @@ describe('react-native', function () {
     assert.ok(!!eventValue);
   });
 
-  it('press missing provider', async function () {
+  it('press missing provider', async () => {
     function UseEventComponent({ onEvent }) {
       useEvent(onEvent, [onEvent]);
       return <Fragment />;

@@ -20,29 +20,29 @@ _export(exports, {
     }
 });
 var _react = require("react");
-var _reactNative = require("react-native");
+var _reactnative = require("react-native");
 var EventContext = (0, _react.createContext)(undefined);
 function EventProvider(param) {
     var children = param.children;
-    var onEvent = function onEvent(event) {
+    var state = (0, _react.useState)([]);
+    var handlers = state[0];
+    function onEvent(event) {
         handlers.forEach(function(subscriber) {
             return subscriber(event);
         });
-    };
-    var subscribe = function subscribe(handler) {
+    }
+    function subscribe(handler) {
         handlers.push(handler);
         return function() {
             return handlers.splice(handlers.indexOf(handler), 1);
         };
-    };
-    var state = (0, _react.useState)([]);
-    var handlers = state[0];
+    }
     return (0, _react.createElement)(EventContext.Provider, {
         value: {
             subscribe: subscribe
         }
-    }, (0, _react.createElement)(_reactNative.View, {
-        style: _reactNative.StyleSheet.absoluteFill,
+    }, (0, _react.createElement)(_reactnative.View, {
+        style: _reactnative.StyleSheet.absoluteFill,
         onStartShouldSetResponderCapture: function(event) {
             event.persist();
             onEvent(event);
@@ -55,6 +55,7 @@ function useEvent(handler, dependencies) {
     if (!context) {
         throw new Error("react-native-event: subscribe not found on context. You might be missing the EventProvider or have multiple instances of react-native-event");
     }
+    // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
     (0, _react.useEffect)(function() {
         return context.subscribe(handler);
     }, [
@@ -62,9 +63,4 @@ function useEvent(handler, dependencies) {
         handler
     ].concat(dependencies));
 }
-
-if ((typeof exports.default === 'function' || (typeof exports.default === 'object' && exports.default !== null)) && typeof exports.default.__esModule === 'undefined') {
-  Object.defineProperty(exports.default, '__esModule', { value: true });
-  for (var key in exports) exports.default[key] = exports[key];
-  module.exports = exports.default;
-}
+/* CJS INTEROP */ if (exports.__esModule && exports.default) { Object.defineProperty(exports.default, '__esModule', { value: true }); for (var key in exports) exports.default[key] = exports[key]; module.exports = exports.default; }
