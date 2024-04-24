@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "lib": ["es2015"],
-    "types": ["jest", "react-native"],
+    "lib": ["es2015", "dom"],
+    "types": ["mocha", "node"],
     "target": "es2020",
     "module": "esnext",
     "moduleResolution": "node",
@@ -11,8 +11,9 @@
     "downlevelIteration": true,
     "allowJs": true,
     "allowUmdGlobalAccess": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "skipLibCheck": true
   },
   "exclude": ["node_modules", "dist"],
-  "include": ["src", "test", "src/index.ts"]
+  "include": ["src", "test"],
 }
