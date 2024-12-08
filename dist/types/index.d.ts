@@ -1,12 +1,12 @@
 import type { ReactNode } from 'react';
 import type { GestureResponderEvent } from 'react-native';
-export declare type EventTypes = GestureResponderEvent;
-export declare type HandlerType = (event: EventTypes) => void;
-export declare type EventContextType = {
+export type EventTypes = GestureResponderEvent;
+export type HandlerType = (event: EventTypes) => void;
+export type EventContextType = {
     subscribe: (handler: HandlerType) => void;
 };
 export declare const EventContext: import("react").Context<EventContextType>;
-export declare type EventProviderProps = {
+export type EventProviderProps = {
     events?: string[];
     children?: ReactNode;
 };
