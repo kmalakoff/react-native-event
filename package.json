@@ -24,7 +24,6 @@
     "./*": "./*"
   },
   "main": "dist/cjs/index.js",
-  "unpkg": "dist/umd/react-native-event.js",
   "module": "dist/esm/index.mjs",
   "types": "dist/types/index.d.ts",
   "files": [
@@ -32,39 +31,32 @@
   ],
   "scripts": {
     "build": "tsds build",
-    "coverage": "tsds link && cross-env NODE_OPTIONS=--experimental-vm-modules jest test/**/*.test.* --collect-coverage",
     "deploy": "tsds deploy",
-    "format": "tsds format",
-    "lint": "tsds lint",
-    "test": "tsds link && cross-env NODE_OPTIONS=--experimental-vm-modules jest jest test/**/*.test.*",
+    "format": "biome check --write --unsafe src/ test/",
+    "test": "npm run test:rn",
     "test:engines": "nvu engines npm test",
+    "test:rn": "tsds link && ts-swc mocha --watch-extensions ts,tsx test/**/*.test-rn.* --loader=./test/lib/alias-rnw.mjs && tsds unlink",
     "version": "tsds version"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.12",
-    "@types/react": "18.0.15",
-    "@types/react-native": "^0.69.1",
-    "cross-env": "^7.0.3",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0",
-    "metro-react-native-babel-preset": "^0.77.0",
-    "react": "18.0.0",
-    "react-native": "0.69.3",
-    "react-test-renderer": "18.0.0",
-    "ts-dev-stack": "^0.8.12"
+    "@biomejs/biome": "^1.9.4",
+    "@types/mocha": "^10.0.10",
+    "@types/react": "^18.3.1",
+    "react": "^18.3.1",
+    "react-native": "^0.76.5",
+    "react-native-web": "^0.19.13",
+    "react-test-renderer": "^18.3.1",
+    "ts-dev-stack": "^1.6.3"
   },
   "peerDependencies": {
     "react": "*",
     "react-native": "*"
   },
+  "packageManager": "npm@11.0.0+sha512.11dff29565d2297c74e7c594a9762581bde969f0aa5cbe6f5b3644bf008a16c065ece61094d9ffbb81125be38df8e1ba43eb8244b3d30c61eb797e9a2440e3ec",
   "engines": {
-    "node": ">=12"
+    "node": ">=16"
   },
   "tsds": {
-    "source": "src/index.ts",
-    "globals": {
-      "react": "React",
-      "react-native": "ReactNative"
-    }
+    "source": "src/index.ts"
   }
 }
