@@ -1,13 +1,12 @@
 // @ts-ignore
 (typeof global === 'undefined' ? window : global).IS_REACT_ACT_ENVIRONMENT = true;
-import assert from 'assert';
-import React from 'react';
-import { Fragment } from 'react';
-import { create } from 'react-test-renderer';
 
+import assert from 'assert';
+import React, { Fragment } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 // @ts-ignore
 import { EventProvider, useEvent } from 'react-native-event';
+import { create } from 'react-test-renderer';
 
 type EventTypes = MouseEvent | TouchEvent | KeyboardEvent;
 
@@ -32,10 +31,12 @@ describe('react-native', () => {
 
     let pressValue: React.MouseEvent<HTMLButtonElement>;
     let eventValue: EventTypes;
-    // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
-    const onPress = (x) => (pressValue = x);
-    // biome-ignore lint/suspicious/noAssignInExpressions: <explanation>
-    const onEvent = (x) => (eventValue = x);
+    const onPress = (x) => {
+      pressValue = x;
+    };
+    const onEvent = (x) => {
+      eventValue = x;
+    };
     const { root } = await React.act(() => create(<Component onPress={onPress} onEvent={onEvent} />));
     assert.equal(pressValue, undefined);
     assert.equal(eventValue, undefined);
