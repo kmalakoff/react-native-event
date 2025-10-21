@@ -21,7 +21,9 @@ export function EventProvider({ children }: EventProviderProps) {
   const handlers = state[0];
 
   function onEvent(event: EventTypes) {
-    handlers.forEach((subscriber) => subscriber(event));
+    handlers.forEach((subscriber) => {
+      subscriber(event);
+    });
   }
   function subscribe(handler: HandlerType) {
     handlers.push(handler);
@@ -52,5 +54,5 @@ export function useEvent(handler: HandlerType, dependencies: unknown[]) {
     throw new Error('react-native-event: subscribe not found on context. You might be missing the EventProvider or have multiple instances of react-native-event');
   }
 
-  useEffect(() => context.subscribe(handler), [context.subscribe, handler, ...dependencies]);
+  useEffect(() => context.subscribe(handler), [context.subscribe, handler, ...dependencies, context]);
 }
