@@ -1,5 +1,4 @@
 import assert from 'assert';
-// @ts-ignore
 import { EventContext, EventProvider, useEvent } from 'react-native-event';
 
 describe('exports .mjs', () => {
