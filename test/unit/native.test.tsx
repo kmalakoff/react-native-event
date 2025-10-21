@@ -1,10 +1,8 @@
-// @ts-ignore
 (typeof global === 'undefined' ? window : global).IS_REACT_ACT_ENVIRONMENT = true;
 
 import assert from 'assert';
 import React, { Fragment } from 'react';
 import { TouchableOpacity, View } from 'react-native';
-// @ts-ignore
 import { EventProvider, useEvent } from 'react-native-event';
 import { create } from 'react-test-renderer';
 
