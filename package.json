@@ -1,6 +1,6 @@
 {
   "name": "react-native-event",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "React context for subscribing to all react native interaction events",
   "keywords": [
     "react-native",
