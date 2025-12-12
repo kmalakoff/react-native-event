@@ -45,7 +45,7 @@
     "@types/node": "^25.0.1",
     "@types/react": "^19.2.7",
     "@web/dev-server-import-maps": "^0.2.1",
-    "node-version-use": "^2.1.5",
+    "node-version-use": "^2.1.6",
     "react": "^19.2.3",
     "react-native": "^0.83.0",
     "react-test-renderer": "^19.2.3",
@@ -55,7 +55,7 @@
   },
   "peerDependencies": {
     "react": "^19.2.1",
-    "react-native": "^0.82.1"
+    "react-native": "^0.83.0"
   },
   "engines": {
     "node": ">=16"
