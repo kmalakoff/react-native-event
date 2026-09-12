@@ -1,6 +1,12 @@
-## react-native-event
+# react-native-event
 
 React context for subscribing to all react native interaction events.
+
+```sh
+npm install react-native-event
+```
+
+The package requires React 16 or newer, React Native, and Node.js 16 or newer.
 
 For a react-dom version, check out [react-dom-event](https://www.npmjs.com/package/react-dom-event)
 
@@ -14,7 +20,7 @@ import { useEvent, EventProvider } from "react-native-event";
 function UseEventComponent() {
   const handler = useCallback((event) => {
     /* do something with any event */
-  });
+  }, []);
 
   useEvent(handler, [handler]);
   return <Fragment />;
