@@ -1,23 +1,25 @@
-import React from 'react';
-import ReactNative from 'react-native';
+import { useState, useEffect, useContext, createContext } from 'react';
+import { ReactNode } from 'react';
+import { View } from 'react-native';
+import { GestureResponderEvent } from 'react-native';
 
-export type EventTypes = ReactNative.GestureResponderEvent;
+export type EventTypes = GestureResponderEvent;
 export type HandlerType = (event: EventTypes) => void;
 
 export type EventContextType = {
   subscribe: (handler: HandlerType) => void;
 };
 
-export const EventContext = React.createContext<EventContextType | undefined>(
+export const EventContext = createContext<EventContextType | undefined>(
   undefined,
 );
 
 export type EventProviderProps = {
   events?: string[];
-  children?: React.ReactNode;
+  children?: ReactNode;
 };
 export function EventProvider({ children }: EventProviderProps) {
-  const state = React.useState<HandlerType[]>([]);
+  const state = useState<HandlerType[]>([]);
   const handlers = state[0];
 
   function onEvent(event: EventTypes) {
@@ -30,7 +32,7 @@ export function EventProvider({ children }: EventProviderProps) {
 
   return (
     <EventContext.Provider value={{ subscribe }}>
-      <ReactNative.View
+      <View
         style={ReactNative.StyleSheet.absoluteFill}
         onStartShouldSetResponderCapture={(
           event: ReactNative.GestureResponderEvent,
@@ -41,20 +43,20 @@ export function EventProvider({ children }: EventProviderProps) {
         }}
       >
         {children}
-      </ReactNative.View>
+      </View>
     </EventContext.Provider>
   );
 }
 
 export function useEvent(handler, dependencies) {
-  const context = React.useContext(EventContext);
+  const context = useContext(EventContext);
   if (!context) {
     throw new Error(
       'react-native-event: subscribe not found on context. You might be missing the EventProvider or have multiple instances of react-native-event',
     );
   }
 
-  React.useEffect(
+  useEffect(
     () => context.subscribe(handler),
     [context.subscribe, handler].concat(dependencies),
   );
