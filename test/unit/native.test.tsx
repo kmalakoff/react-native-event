@@ -1,5 +1,5 @@
 import assert from 'assert';
-import React from 'react';
+import { Fragment } from 'react';
 import { create, act } from 'react-test-renderer';
 
 import { View, TouchableOpacity } from 'react-native';
@@ -9,7 +9,7 @@ describe('react-native', function () {
   it('click', async function () {
     function UseEventComponent({ onEvent }) {
       useEvent(onEvent, [onEvent]);
-      return <React.Fragment />;
+      return <Fragment />;
     }
 
     function Component({ onPress, onEvent }) {
@@ -79,7 +79,7 @@ describe('react-native', function () {
   it('press missing provider', async function () {
     function UseEventComponent({ onEvent }) {
       useEvent(onEvent, [onEvent]);
-      return <React.Fragment />;
+      return <Fragment />;
     }
 
     function Component({ onPress, onEvent }) {
