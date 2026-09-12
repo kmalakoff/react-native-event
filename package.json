@@ -61,7 +61,7 @@
     "node": ">=12"
   },
   "tsds": {
-    "source": "src/index.tsx",
+    "source": "src/index.ts",
     "globals": {
       "react": "React",
       "react-native": "ReactNative"
