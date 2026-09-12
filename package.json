@@ -59,5 +59,8 @@
   },
   "engines": {
     "node": ">=16"
+  },
+  "allowScripts": {
+    "esbuild": true
   }
 }
