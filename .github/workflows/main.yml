@@ -82,7 +82,7 @@ jobs:
         run: pod install --project-directory=ios
       - name: Build and install fixture
         working-directory: examples/native-test-app
-        run: npm run ios -- --no-packager --udid "$IOS_SIMULATOR_UDID"
+        run: bash ../../test/integration/build-ios.sh "$IOS_SIMULATOR_UDID"
       - name: Set up Java for Maestro
         uses: actions/setup-java@v5
         with:
@@ -93,19 +93,21 @@ jobs:
           export MAESTRO_VERSION=2.7.0
           curl -fsSL https://get.maestro.mobile.dev | bash
       - name: Run iOS Maestro flow
+        timeout-minutes: 15
         env:
           MAESTRO_DRIVER_STARTUP_TIMEOUT: '600000'
         run: |
           export PATH="$HOME/.maestro/bin:$PATH"
           maestro --device "$IOS_SIMULATOR_UDID" test test/integration/maestro/native-event.yaml
       - name: Upload Maestro diagnostics
-        if: failure()
+        if: failure() || cancelled()
         uses: actions/upload-artifact@v4
         with:
           name: ios-maestro-diagnostics
           path: |
             ~/.maestro/tests
             ~/Library/Logs/CoreSimulator
+            .tmp/ios-build.log
           include-hidden-files: true
   android-native-smoke:
     name: Android native smoke (RN 0.87.1)
@@ -153,7 +155,7 @@ jobs:
           disable-animations: true
           script: bash test/integration/run-android.sh
       - name: Upload Android diagnostics artifact
-        if: failure()
+        if: failure() || cancelled()
         uses: actions/upload-artifact@v4
         with:
           name: android-native-diagnostics

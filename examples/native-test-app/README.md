@@ -12,7 +12,7 @@ Build and launch a simulator target with the matching platform tooling:
 ```sh
 npm run build:ios
 pod install --project-directory=ios
-npm run ios -- --no-packager --udid <simulator-udid>
+bash ../../test/integration/build-ios.sh <simulator-udid>
 ```
 
 For Android, use `npm run build:android` followed by `bash ../../test/integration/run-android.sh` from this directory with an API 35 emulator and Maestro installed. The script runs the same fixture command as CI and captures Android diagnostics before emulator teardown.
@@ -24,3 +24,6 @@ maestro --device "$ANDROID_SERIAL" test ../../test/integration/maestro/native-ev
 ```
 
 For iOS, replace `ANDROID_SERIAL` with the simulator UDID in the same command.
+
+The iOS helper builds for the selected simulator, installs with `simctl`, verifies
+the application container, and launches it before Maestro runs.
