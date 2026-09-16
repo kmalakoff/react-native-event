@@ -57,7 +57,8 @@ function App() {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    padding: 24,
+    paddingTop: 120,
+    paddingHorizontal: 24,
     gap: 16,
   },
   controls: {
