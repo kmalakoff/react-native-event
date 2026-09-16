@@ -4,7 +4,6 @@ const project = (() => {
     return configureProjects({
       android: {
         sourceDir: "android",
-        packageName: "com.reactnativeevent.smoke",
       },
       ios: {
         sourceDir: "ios",
