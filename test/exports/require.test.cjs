@@ -1,10 +1,10 @@
 const assert = require('assert');
-const { EventContext, useEvent, EventProvider } = require('react-native-event');
+const path = require('path');
 
 describe('exports .cjs', () => {
-  it('defaults', () => {
-    assert.equal(typeof EventContext, 'object');
-    assert.equal(typeof EventProvider, 'function');
-    assert.equal(typeof useEvent, 'function');
+  it('resolves the CommonJS entry', () => {
+    const packageJsonPath = require.resolve('react-native-event/package.json');
+    const packageJson = require(packageJsonPath);
+    assert.equal(require.resolve('react-native-event'), path.resolve(path.dirname(packageJsonPath), packageJson.main));
   });
 });

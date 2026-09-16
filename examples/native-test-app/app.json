@@ -1,0 +1,20 @@
+{
+  "name": "EventSmoke",
+  "displayName": "EventSmoke",
+  "components": [
+    {
+      "appKey": "EventSmoke",
+      "displayName": "EventSmoke"
+    }
+  ],
+  "ios": {
+    "bundleIdentifier": "com.reactnativeevent.smoke"
+  },
+  "android": {
+    "package": "com.reactnativeevent.smoke"
+  },
+  "resources": {
+    "ios": ["dist/assets", "dist/main.ios.jsbundle"],
+    "android": ["dist/res", "dist/main.android.jsbundle"]
+  }
+}

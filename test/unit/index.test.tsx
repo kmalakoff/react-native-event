@@ -1,110 +1,91 @@
-((typeof global === 'undefined' ? window : global) as unknown as Record<string, unknown>).IS_REACT_ACT_ENVIRONMENT = true;
-
 import assert from 'assert';
-import React, { Fragment } from 'react';
-import { TouchableOpacity, View } from 'react-native';
-import { EventProvider, type EventTypes, type HandlerType, useEvent } from 'react-native-event';
-import { create } from 'react-test-renderer';
+import React, { Fragment, useCallback } from 'react';
+import { createRoot, type Root } from 'react-dom/client';
+import { EventProvider, type EventTypes, useEvent } from 'react-native-event';
 
-describe('react-native', () => {
-  it('click', async () => {
-    function UseEventComponent({ onEvent }: { onEvent: HandlerType }) {
-      useEvent(onEvent, [onEvent]);
-      return <Fragment />;
+(globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
+
+describe('React Native Web capture', () => {
+  let host: HTMLDivElement;
+  let root: Root;
+  beforeEach(() => {
+    host = document.createElement('div');
+    document.body.appendChild(host);
+    root = createRoot(host);
+  });
+  afterEach(() => {
+    React.act(() => root.unmount());
+    host.remove();
+  });
+  function press(id: string) {
+    const button = host.querySelector<HTMLButtonElement>(`#${id}`);
+    assert.ok(button);
+    React.act(() => {
+      button.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, button: 0 }));
+      button.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, button: 0 }));
+      button.click();
+    });
+  }
+
+  it('captures descendant input, preserves child clicks, updates handlers, and cleans up', () => {
+    const received: string[] = [];
+    const targets: unknown[] = [];
+    let childClicks = 0;
+    function Listener({ mode }: { mode: string }) {
+      const handler = useCallback(
+        (event: EventTypes) => {
+          received.push(mode);
+          targets.push(event.target);
+        },
+        [mode]
+      );
+      useEvent(handler, [mode]);
+      return null;
     }
-
-    function Component({ onPress, onEvent }: { onPress: (event: unknown) => void; onEvent: HandlerType }) {
+    function App({ mode, mounted = true }: { mode: string; mounted?: boolean }) {
       return (
-        <View>
-          <EventProvider>
-            <TouchableOpacity testID="inside" onPress={onPress} />
-            <UseEventComponent onEvent={onEvent} />
-          </EventProvider>
-          <TouchableOpacity testID="outside" onPress={onPress} />
-        </View>
+        <Fragment>
+          <div style={{ position: 'relative', height: 100 }}>
+            <EventProvider>
+              {mounted && <Listener mode={mode} />}
+              <button
+                type="button"
+                id="inside"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  childClicks++;
+                }}
+              >
+                Inside
+              </button>
+            </EventProvider>
+          </div>
+          <button type="button" id="outside">
+            Outside
+          </button>
+        </Fragment>
       );
     }
-
-    let pressValue: unknown;
-    let eventValue: EventTypes | undefined;
-    const onPress = (x: unknown) => {
-      pressValue = x;
-    };
-    const onEvent: HandlerType = (x) => {
-      eventValue = x;
-    };
-    const { root } = await React.act(() => create(<Component onPress={onPress} onEvent={onEvent} />));
-    assert.equal(pressValue, undefined);
-    assert.equal(eventValue, undefined);
-
-    // inside
-    pressValue = undefined;
-    eventValue = undefined as EventTypes | undefined;
-    React.act(() => {
-      const event = {
-        target: root.findByProps({ testID: 'inside' }),
-        persist() {
-          /* empty */
-        },
-      };
-      (root.findByProps({ testID: 'inside' }).props.onPress as (e: unknown) => void)(event);
-      // emulate onStartShouldSetResponderCapture
-      root.findAll((node) => {
-        if (node.props?.onStartShouldSetResponderCapture) (node.props.onStartShouldSetResponderCapture as (e: unknown) => void)(event);
-        return false;
-      });
-    });
-    assert.equal((pressValue as Record<string, unknown>)?.target, root.findByProps({ testID: 'inside' }));
-    assert.ok(!!eventValue);
-
-    // outside
-    pressValue = undefined;
-    eventValue = undefined as EventTypes | undefined;
-    React.act(() => {
-      const event = {
-        target: root.findByProps({ testID: 'outside' }),
-        persist() {
-          /* empty */
-        },
-      };
-      (root.findByProps({ testID: 'outside' }).props.onPress as (e: unknown) => void)(event);
-      // emulate onStartShouldSetResponderCapture
-      root.findAll((node) => {
-        if (node.props?.onStartShouldSetResponderCapture) (node.props.onStartShouldSetResponderCapture as (e: unknown) => void)(event);
-        return false;
-      });
-    });
-    assert.equal((pressValue as Record<string, unknown>)?.target, root.findByProps({ testID: 'outside' }));
-    assert.ok(!!eventValue);
+    React.act(() => root.render(<App mode="first" />));
+    press('inside');
+    press('outside');
+    assert.deepEqual(received, ['first']);
+    assert.equal(childClicks, 1);
+    assert.strictEqual(targets[0], host.querySelector('#inside'));
+    React.act(() => root.render(<App mode="second" />));
+    press('inside');
+    assert.deepEqual(received, ['first', 'second']);
+    React.act(() => root.render(<App mode="second" mounted={false} />));
+    press('inside');
+    assert.deepEqual(received, ['first', 'second']);
+    assert.equal(childClicks, 3);
   });
 
-  it('press missing provider', async () => {
-    function UseEventComponent({ onEvent }: { onEvent: HandlerType }) {
-      useEvent(onEvent, [onEvent]);
-      return <Fragment />;
+  it('throws when useEvent has no provider', () => {
+    function MissingProvider() {
+      useEvent(() => undefined, []);
+      return null;
     }
-
-    function Component({ onPress, onEvent }: { onPress: () => void; onEvent: HandlerType }) {
-      return (
-        <View>
-          <TouchableOpacity testID="inside" onPress={onPress} />
-          <UseEventComponent onEvent={onEvent} />
-          <TouchableOpacity testID="outside" onPress={onPress} />
-        </View>
-      );
-    }
-
-    try {
-      const onPress = () => {
-        /* emptty */
-      };
-      const onEvent: HandlerType = () => {
-        /* emptty */
-      };
-      await React.act(() => create(<Component onPress={onPress} onEvent={onEvent} />));
-    } catch (err: unknown) {
-      console.log(err);
-      assert.ok((err as Error).message.indexOf('subscribe not found on context') >= 0);
-    }
+    assert.throws(() => React.act(() => root.render(<MissingProvider />)), /subscribe not found on context/);
   });
 });
