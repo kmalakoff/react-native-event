@@ -1,1 +1,1 @@
-ignores: ["react-native-event", "node-version-use", "ts-dev-stack", "tsds-web-test-runner", "react", "react-*", "ts-swc-loaders", "fs-remove-compat"]
+ignores: ["assert", "react-native-event", "node-version-use", "ts-dev-stack", "tsds-web-test-runner", "react", "react-*", "ts-swc-loaders", "fs-remove-compat"]

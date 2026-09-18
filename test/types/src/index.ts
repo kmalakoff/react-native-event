@@ -13,6 +13,9 @@ const props: EventProviderProps = { children: null };
 // @ts-expect-error: react-native-event has no DOM event configuration
 const invalidProps: EventProviderProps = { events: ['press'] };
 const provider = EventProvider(props);
-useEvent(handler, dependencies);
+export function Consumer() {
+  useEvent(handler, dependencies);
+  return null;
+}
 void provider;
 void invalidProps;

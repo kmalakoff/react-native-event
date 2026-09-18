@@ -1,26 +1,28 @@
 import assert from 'assert';
 import React, { Fragment, useCallback } from 'react';
-import { createRoot, type Root } from 'react-dom/client';
 import { EventProvider, type EventTypes, useEvent } from 'react-native-event';
+import { act, type MountedRoot, mount } from '../lib/react-dom.tsx';
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
 describe('React Native Web capture', () => {
   let host: HTMLDivElement;
-  let root: Root;
+  let root: MountedRoot;
   beforeEach(() => {
     host = document.createElement('div');
     document.body.appendChild(host);
-    root = createRoot(host);
+    act(() => {
+      root = mount(host, null);
+    });
   });
   afterEach(() => {
-    React.act(() => root.unmount());
+    act(() => root.unmount());
     host.remove();
   });
   function press(id: string) {
     const button = host.querySelector<HTMLButtonElement>(`#${id}`);
     assert.ok(button);
-    React.act(() => {
+    act(() => {
       button.dispatchEvent(new MouseEvent('mousedown', { bubbles: true, button: 0 }));
       button.dispatchEvent(new MouseEvent('mouseup', { bubbles: true, button: 0 }));
       button.click();
@@ -66,26 +68,34 @@ describe('React Native Web capture', () => {
         </Fragment>
       );
     }
-    React.act(() => root.render(<App mode="first" />));
+    act(() => root.render(<App mode="first" />));
     press('inside');
     press('outside');
     assert.deepEqual(received, ['first']);
     assert.equal(childClicks, 1);
     assert.strictEqual(targets[0], host.querySelector('#inside'));
-    React.act(() => root.render(<App mode="second" />));
+    act(() => root.render(<App mode="second" />));
     press('inside');
     assert.deepEqual(received, ['first', 'second']);
-    React.act(() => root.render(<App mode="second" mounted={false} />));
+    act(() => root.render(<App mode="second" mounted={false} />));
     press('inside');
     assert.deepEqual(received, ['first', 'second']);
     assert.equal(childClicks, 3);
   });
 
   it('throws when useEvent has no provider', () => {
+    let capturedError: unknown;
     function MissingProvider() {
-      useEvent(() => undefined, []);
+      try {
+        // biome-ignore lint/correctness/useHookAtTopLevel: Capture the expected missing-provider error from this unconditional hook call.
+        useEvent(() => undefined, []);
+      } catch (error) {
+        capturedError = error;
+      }
       return null;
     }
-    assert.throws(() => React.act(() => root.render(<MissingProvider />)), /subscribe not found on context/);
+    act(() => root.render(<MissingProvider />));
+    assert.ok(capturedError instanceof Error);
+    assert.ok(/subscribe not found on context/.test(capturedError.message));
   });
 });
