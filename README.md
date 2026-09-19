@@ -49,9 +49,9 @@ It does not accept an `events` configuration prop.
 ### Testing
 
 Run `npm test` for strict consumer types, browser interactions, and registry tests.
-Run `npm run test:engines` for the browser checks and the registry/export tests
-across supported Node.js versions. Actual iOS and Android input is tested by the
-[native fixture](examples/native-test-app/README.md) in GitHub Actions.
+Run `npm run test:engines` for export resolution on Node.js 16.0.0; it does not
+execute React Native. GitHub Actions tests real iOS and Android input through
+the shared native fixture. See the [compatibility matrix](test/README.md).
 
 ### Documentation
 
