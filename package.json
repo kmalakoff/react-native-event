@@ -20,6 +20,7 @@
   "type": "module",
   "exports": {
     ".": {
+      "react-native": "./dist/esm/index.js",
       "import": "./dist/esm/index.js",
       "require": "./dist/cjs/index.js"
     },
@@ -36,25 +37,37 @@
     "docs": "tsds docs",
     "format": "tsds format",
     "prepublishOnly": "tsds validate",
-    "test": "tsds test:browser --config wtr.config.mjs",
-    "test:engines": "tsds test:browser --config wtr.config.mjs",
+    "test": "npm run test:types && npm run test:browser && npm run test:node",
+    "test:browser": "npm run test:browser:minimum && npm run test:browser:current",
+    "test:browser:checkpoints": "node test/lib/browser-checkpoints.mjs",
+    "test:browser:current": "npm ci --prefix test/browser/current --ignore-scripts --no-audit --no-fund && tsds test:browser --config wtr.current.config.mjs test/exports/import.test.ts test/exports/import.test.mjs test/unit/index.test.tsx",
+    "test:browser:minimum": "npm ci --prefix test/browser/minimum --ignore-scripts --no-audit --no-fund && tsds test:browser --config wtr.minimum.config.mjs test/exports/import.test.ts test/exports/import.test.mjs test/unit/index.test.tsx",
+    "test:engines": "npm run build && node test/lib/test-floor.ts",
+    "test:node": "tsds test:node --no-timeouts test/unit/lib/subscription-registry.test.ts test/exports/require.test.cjs",
+    "test:types": "npm run build && node test/types/run.ts",
+    "test:types:generated": "npm run build && node test/types/run.ts --generated",
     "version": "tsds version"
   },
   "devDependencies": {
     "@types/mocha": "*",
     "@types/node": "*",
     "@types/react": "*",
+    "@types/react-dom": "^19.3.0",
     "@web/dev-server-import-maps": "^0.3.0",
+    "assert": "^1.5.1",
+    "esbuild": "^0.28.2",
+    "fs-remove-compat": "*",
     "node-version-use": "*",
     "react": "*",
+    "react-dom": "^19.3.0",
     "react-native": "*",
-    "react-test-renderer": "*",
+    "tar": "^7.5.22",
     "ts-dev-stack": "*",
     "tsds-config": "*",
     "tsds-web-test-runner": "*"
   },
   "peerDependencies": {
-    "react": "*",
+    "react": ">=16.8.0",
     "react-native": "*"
   },
   "engines": {
