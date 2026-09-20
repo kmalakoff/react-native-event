@@ -50,8 +50,9 @@ It does not accept an `events` configuration prop.
 
 Run `npm test` for strict consumer types, browser interactions, and registry tests.
 Run `npm run test:engines` for export resolution on Node.js 16.0.0; it does not
-execute React Native. GitHub Actions tests real iOS and Android input through
-the shared native fixture. See the [compatibility matrix](test/README.md).
+execute React Native. The shared native fixture tests real iOS and Android input
+locally and through manually requested GitHub Actions runs. See
+[local tests and manual Android/iOS CI](test/README.md).
 
 ### Documentation
 
