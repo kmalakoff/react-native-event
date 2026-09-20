@@ -1,29 +1,31 @@
-# Native event smoke app
+# Compatibility tests
 
-Install and validate the pinned fixture from this directory:
+Use Node 26 for development tooling. Each browser profile installs its own lockfile with npm ci and uses one current Chromium through WTR. The profiles vary React dependencies, not browser versions.
+
+| Command | Coverage |
+| --- | --- |
+| `npm test` | Isolated consumer types, minimum/current browser assertions, then Node helper/export checks |
+| `npm run test:engines` | Already-built package smoke checks on exact Node 16.0.0; no DOM or renderer on old Node |
+| `npm run test:browser:checkpoints` | Optional React/ReactDOM 17.0.2 and 18.3.1 checks for compatibility-sensitive changes or releases |
+
+Routine browser endpoints pin React and ReactDOM together at 16.8.0 and 19.3.0. React Native Web is pinned to 0.13.18 for minimum/React 17 and 0.21.2 for current/React 18. These are web tests, not native device tests. All profiles use the same behavioral assertions. React 16/17 use legacy mounting; React 18/19 use createRoot. Local bundled bridges keep one React instance and avoid CDN conversion.
+
+The React 16.8 profile supports synchronous `act` callbacks only, and the current tests use synchronous callbacks. Async callbacks require a React version with async `act` support and are not covered by this matrix.
+
+The Node 16 check verifies native export resolution only; it does not execute React Native. Consumer declaration limitations and the explicit RN declaration condition are documented in [types/README.md](types/README.md).
+
+## Run Android and iOS manually on GitHub Actions
+
+Native testing runs only when requested. On GitHub, open **Actions → CI → Run workflow**, select `worktree-compatibility-matrix`, enable `run_native`, then choose `native_platform` (`android`, `ios`, or `both`) and `native_profile` (`current`, `minimum`, or `all`). Use `master` after these changes are merged.
 
 ```sh
-npm ci
-npm run validate
+# Current React Native on Android
+gh workflow run main.yml --repo kmalakoff/react-native-event --ref worktree-compatibility-matrix -f run_native=true -f native_profile=current -f native_platform=android
+
+# Current React Native on iOS
+gh workflow run main.yml --repo kmalakoff/react-native-event --ref worktree-compatibility-matrix -f run_native=true -f native_profile=current -f native_platform=ios
 ```
 
-Build and launch a simulator target with the matching platform tooling:
+Use `native_profile=all` and `native_platform=both` to run both RN dependency profiles on both platforms. This tests the selected commit of this package together with pinned cooperating candidates. Routine push/PR checks do not start native jobs.
 
-```sh
-npm run build:ios
-pod install --project-directory=ios
-bash ../../test/integration/build-ios.sh <simulator-udid>
-```
-
-For Android, use `npm run build:android` followed by `bash ../../test/integration/run-android.sh` from this directory with an API 35 emulator and Maestro installed. The script runs the same fixture command as CI and captures Android diagnostics before emulator teardown.
-
-Maestro uses the device option before the `test` subcommand:
-
-```sh
-maestro --device "$ANDROID_SERIAL" test ../../test/integration/maestro/native-event.yaml
-```
-
-For iOS, replace `ANDROID_SERIAL` with the simulator UDID in the same command.
-
-The iOS helper builds for the selected simulator, installs with `simctl`, verifies
-the application container, and launches it before Maestro runs.
+See the [shared native test guide](https://github.com/kmalakoff/react-native-outside/blob/worktree-compatibility-matrix/test/README.md#run-android-and-ios-manually-on-github-actions) for prerequisites, run monitoring, diagnostics, candidate selection and the exact legacy iOS compiler accommodations. Both native profiles passed locally on Android and iOS. The legacy fixture uses installation overrides and does not expand the packages' declared support ranges.

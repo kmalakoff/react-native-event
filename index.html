@@ -25,9 +25,10 @@ The provider observes responder capture and leaves child press handling intact.
 It does not accept an <code>events</code> configuration prop.</p>
 <h3 id="testing" class="tsd-anchor-link">Testing<a href="#testing" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <p>Run <code>npm test</code> for strict consumer types, browser interactions, and registry tests.
-Run <code>npm run test:engines</code> for the browser checks and the registry/export tests
-across supported Node.js versions. Actual iOS and Android input is tested by the
-<a href="media/README.md">native fixture</a> in GitHub Actions.</p>
+Run <code>npm run test:engines</code> for export resolution on Node.js 16.0.0; it does not
+execute React Native. The shared native fixture tests real iOS and Android input
+locally and through manually requested GitHub Actions runs. See
+<a href="media/README.md">local tests and manual Android/iOS CI</a>.</p>
 <h3 id="documentation" class="tsd-anchor-link">Documentation<a href="#documentation" aria-label="Permalink" class="tsd-anchor-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><use href="assets/icons.svg#icon-anchor"></use></svg></a></h3>
 <p><a href="https://kmalakoff.github.io/react-native-event/">API Docs</a></p>
 </div></div>
