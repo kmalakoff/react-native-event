@@ -1,5 +1,5 @@
 import assert from 'assert';
-import React, { Fragment, useCallback } from 'react';
+import React, { Component, Fragment, type ReactNode, useCallback } from 'react';
 import { EventProvider, type EventTypes, useEvent } from 'react-native-event';
 import { act, type MountedRoot, mount } from '../lib/react-dom.tsx';
 
@@ -57,14 +57,10 @@ describe('React Native Web capture', () => {
                   event.stopPropagation();
                   childClicks++;
                 }}
-              >
-                Inside
-              </button>
+              />
             </EventProvider>
           </div>
-          <button type="button" id="outside">
-            Outside
-          </button>
+          <button type="button" id="outside" />
         </Fragment>
       );
     }
@@ -85,16 +81,40 @@ describe('React Native Web capture', () => {
 
   it('throws when useEvent has no provider', () => {
     let capturedError: unknown;
-    function MissingProvider() {
-      try {
-        // biome-ignore lint/correctness/useHookAtTopLevel: Capture the expected missing-provider error from this unconditional hook call.
-        useEvent(() => undefined, []);
-      } catch (error) {
+    class Boundary extends Component<{ children?: ReactNode }, { failed: boolean }> {
+      state = { failed: false };
+      static getDerivedStateFromError() {
+        return { failed: true };
+      }
+      componentDidCatch(error: unknown) {
         capturedError = error;
       }
+      render() {
+        return this.state.failed ? null : this.props.children;
+      }
+    }
+    function MissingProvider() {
+      useEvent(() => undefined, []);
       return null;
     }
-    act(() => root.render(<MissingProvider />));
+
+    // React reports a caught render error to window.onerror in development; keep it from failing the run
+    const originalOnError = window.onerror;
+    window.onerror = () => true;
+    const originalConsoleError = console.error;
+    console.error = () => undefined;
+    try {
+      act(() =>
+        root.render(
+          <Boundary>
+            <MissingProvider />
+          </Boundary>
+        )
+      );
+    } finally {
+      console.error = originalConsoleError;
+      window.onerror = originalOnError;
+    }
     assert.ok(capturedError instanceof Error);
     assert.ok(/subscribe not found on context/.test(capturedError.message));
   });
